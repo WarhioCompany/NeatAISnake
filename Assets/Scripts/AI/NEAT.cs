@@ -34,6 +34,7 @@ public class NEAT
     public static double enableDisableConnection;
 
     private int generationNumber;
+    public static Dictionary<int, Specie> species;
 
     public NEAT(int populationSize, int inputNodesSise, int outputNodesSize, int generationNumber)
     {

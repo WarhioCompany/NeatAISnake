@@ -1,10 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 public static class Speciating
 {
+    public static List<Specie> Speciate(List<Genome> genomes){
+        List<Specie> species = new List<Specie>();
+
+        
+    }
     public static List<List<Genome>> Speciate(List<Genome> genomes, List<Genome> prev = null)
     {
-        List<List<Genome>> species = new List<List<Genome>>();
+        List<Specie> species = new List<Specie>();
 
         List<Genome> buf = new List<Genome>(genomes);
 
@@ -12,18 +18,10 @@ public static class Speciating
         {
             Genome leader;
             if (prev == null) leader = buf[Random.Range(0, buf.Count)];
-            else leader = prev[]//Change this
-
-            species.Add(new List<Genome>());
-            for (int j = 0; i < genomes.Count; j++)
-            {
-                if (GetDistance(leader, genomes[j]) <= NEAT.compThresh)
-                {
-                    genomes[j].specieID = leader.specieID;
-                    species[i].Add(genomes[j]);
-                    buf.Remove(genomes[j]);
-                }
-            }
+            else leader = prev[Random.Range(0, prev.Count)]; 
+            
+            species.Add();
+            
             //IMPORTANT: I am currently deleting single member species 
             if (species[i].Count == 1)
             {
@@ -39,12 +37,31 @@ public static class Speciating
             }
         }
     }
+    private Genome getLeader(List<Genome> arr, List<int> alreadySpeciated){
+        List<Genome> nonSpeciate = arr.Where(p => !alreadySpeciated.Contains(p.specieID));
+        if(nonSpeciate.Count == 0) return null;
+
+        Genome leader;
+        do{
+            leader = nonSpeciate[Random.Range(0, nonSpeciate.Count)];
+        }while(leader.specieID != 0);
+        return leader;
+    }
+    private Specie getSpecie(Genome leader, List<Genome> genomes){
+        List<Genome> genomesOfSpecie = new List<Genome>();
+        foreach(Genome member in genomes){
+            if(GetCompatibility(leader, member) <= NEAT.compThresh){
+                genomesOfSpecie.Add(member);
+            }
+        }        
+        return new Specie(genomesOfSpecie);
+    }
     public static int GetNumberOfOffspringForSpecie(double avgAdjFitness, double avgGlobalFitness, int membersCount)
     {
         return (int)System.Math.Round(avgAdjFitness / avgGlobalFitness * membersCount);
     }
 
-    public static double GetDistance(Genome first, Genome second)
+    public static double GetCompatibility(Genome first, Genome second)
     {
         List<Pair<ConnectionGene>> pairs = GenomesFunctions.MatchupGenomes(first, second);
 
